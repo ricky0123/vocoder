@@ -1,0 +1,61 @@
+%import python.NAME -> IDENTIFIER
+%import common (LCASE_LETTER, WS, INT, C_COMMENT, CPP_COMMENT)
+%ignore WS | C_COMMENT | CPP_COMMENT
+
+WORD: (LCASE_LETTER|"'")+
+
+start: _statement+
+_statement: lexicon_assignment | attribute_assignment | nonterminal_assignment
+
+?base_lexicon: ":" IDENTIFIER -> named_lexicon
+             | WORD           -> singleton_lexicon
+?lexicon_expression: base_lexicon (lexicon_operation)*
+
+?lexicon_operation: "+" base_lexicon -> lexicon_addition
+                  | "-" base_lexicon -> lexicon_subtraction
+lexicon_assignment: ":" IDENTIFIER "=" lexicon_expression
+
+attribute: "%" IDENTIFIER
+attribute_assignment: "%" IDENTIFIER "=" "%" IDENTIFIER
+
+nonterminal_assignment: "!" IDENTIFIER "=" expression 
+                      | "!" IDENTIFIER "=" expression "=>" attribute -> attributed_nonterminal_assignment
+                      | "!" IDENTIFIER "~=" expression -> within_utterance_nonterminal_assignment
+                      | "!" IDENTIFIER "~=" expression "=>" attribute -> within_utterance_attributed_nonterminal_assignment
+?expression: symbol
+           | cat
+           | alt
+           | parenthesized
+           | closure
+           | positive_closure
+           | maybe
+           | capture
+           | attributed_expression
+           | within_utterance_expression
+?symbol: lexicon_expression -> lex_ref
+       | "_" -> null
+       | "!" IDENTIFIER -> nonterminal
+
+// Expression minus cat and alt
+?d: symbol
+  | parenthesized
+  | closure
+  | positive_closure
+  | maybe
+  | capture
+  | attributed_expression
+  | within_utterance_expression
+cat: d d+
+
+// Expression minus alt
+?e: d | cat
+alt: e ("|" e)+
+
+within_utterance_expression: "~" d
+?parenthesized: "(" expression ")"
+closure: "<" "*" expression ">"
+positive_closure: "<" expression ">"
+maybe: "[" expression "]"
+?capture: d "@" IDENTIFIER -> named_capture
+        | d "@" INT -> positional_capture
+attributed_expression: d "->" attribute
