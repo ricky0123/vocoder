@@ -9,7 +9,6 @@ license = "MIT"
 authors = ["ricky <rickycontact9@gmail.com>"]
 readme = "README.md"
 homepage = "https://github.com/ricky0123/vocoder"
-repository = "https://github.com/ricky0123/vocoder"
 documentation = "https://github.com/ricky0123/vocoder/blob/master/docs/user-guide.md"
 
 [tool.poetry.dependencies]
