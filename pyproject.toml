@@ -3,7 +3,7 @@ name = "vocoder-dictation"
 packages = [
     { include = "vocoder" },
 ]
-version = "0.1.0"
+version = "0.1.1"
 description = "Dictation for programmers"
 license = "MIT"
 authors = ["ricky <rickycontact9@gmail.com>"]

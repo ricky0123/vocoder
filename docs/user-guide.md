@@ -267,13 +267,13 @@ The following subsections show how to implement some common dictation patterns i
 We can use regular expressions to create a grammar with a sleep mode.
 
 ```python
-from vocoder.lexicons import load_en_us
+from vocoder.lexicons import en_frequent
 
 g(f"""
-!start = <   ~(vocoder sleep) <* :en_us - vocoder > ~(vocoder wake)
-           | ~< :en_us - vocoder > -> %{g(lambda words: print(" ".join(words)))}
+!start = <   ~(vocoder sleep) <* :en - vocoder > ~(vocoder wake)
+           | ~< :en - vocoder > -> %{g(lambda words: print(" ".join(words)))}
          >
-:en_us = :{g(load_en_us())}
+:en = :{g(en_frequent(30_000))}
 """)
 ```
 
@@ -352,5 +352,3 @@ g(f"""
 # Credits
 
 The way that vocoder represents and works with grammars was inspired by the work leading to [kleenexlang](https://kleenexlang.org/). The presentation in [Søholm and Tørholm](https://brohr.coq.dk/data/thesis-final.pdf) was especially useful.
-
-Thanks also to the creator of Talon for compiling the [list of words](https://github.com/talonvoice/lexicon) included in vocoder as the [en_us](../vocoder/lexicons/en_US.txt) lexicon.
